@@ -67,7 +67,7 @@ class Game(object):
     def get_allowed_moves(self, figure):
         allowed_moves = {}
 
-        if figure == 0:
+        if figure == 0 or figure.color != self.turn:
             return {}
         
         row = figure.row
