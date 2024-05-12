@@ -24,18 +24,17 @@ class Board:
 
     def draw_figure(self):
         for row in range(utilities.rows):
-            self.board.append([]) 
+            self.board.append([])
             for col in range(utilities.cols):
+                figure = 0
                 if col % 2 == ((row + 1) % 2):
                     if row < 3:
-                        self.board[row].append(Figure(row, col, utilities.black))
+                        figure = Figure(row, col, utilities.black)
                     elif row > 4:
-                        self.board[row].append(Figure(row, col, utilities.red)) 
-                    else:
-                        self.board[row].append(0)
-                else:
-                    self.board[row].append(0)
+                        figure = Figure(row, col, utilities.red)
+                self.board[row].append(figure)
 
+    
     def draw_board(self, screen):
         self.create_board(screen)
         for row in range(utilities.rows):
@@ -44,6 +43,7 @@ class Board:
                 if figure != 0:
                     figure.draw(screen)
 
+    
     def remove(self, figures):
         for figure in figures:
             self.board[figure.row][figure.col] = 0
