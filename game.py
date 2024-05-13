@@ -195,69 +195,6 @@ class Game(object):
         elif self.board.black_figures == 0:
             return red
         return None
-
-    
-    def evaluete_current_board(self):
-        regular_figure_weight = 5
-        dama_weight = 7
-        figur_in_back_row_weight = 4
-        figure_in_middle_box_weight = 2.5
-        figure_in_middle_two_rows = 0.5
-        protected_figure_weight = 3
-
-        player_figures = self.board.red_figures
-        computer_figures = self.board.black_figures
-
-        player_dama = self.board.red_dame
-        computer_dama = self.board.black_dame
-
-        player_protected_figures = 0
-        computer_protected_figures = 0
-
-        player_figures_in_back_row = 0
-        computer_figures_in_back_row = 0
-
-        player_figures_in_middle_box = 0
-        computer_figures_in_middle_box = 0
-
-        player_figures_in_middle_two_rows = 0
-        computer_figures_in_middle_two_rows = 0
-
-        for row in range(rows):
-            for col in range(cols):
-                figure = self.board.get_figure(row, col)
-                if figure != 0:
-                    if figure.color == red:
-                        player_figures += 1
-                        if figure.is_dama():
-                            player_dama += 1
-                        else:
-                            if row == 7:
-                                player_figures_in_back_row += 1
-                            if 2 <= row <= 5 and 2 <= col <= 5:
-                                player_figures_in_middle_box += 1
-                            if 3 <= row <= 4:
-                                player_figures_in_middle_two_rows += 1
-                            if self.is_protected(figure):
-                                player_protected_figures += 1
-                    if figure.color == black:
-                        computer_figures += 1
-                        if figure.is_dama():
-                            computer_dama += 1
-                        else:
-                            if row == 0:
-                                computer_figures_in_back_row += 1
-                            if 2 <= row <= 5 and 2 <= col <= 5:
-                                computer_figures_in_middle_box += 1
-                            if 3 <= row <= 4:
-                                computer_figures_in_middle_two_rows += 1
-                            if self.is_protected(figure):
-                                computer_protected_figures += 1
-        
-        player_score = regular_figure_weight * player_figures + dama_weight * player_dama + figur_in_back_row_weight * player_figures_in_back_row + figure_in_middle_box_weight * player_figures_in_middle_box + figure_in_middle_two_rows * player_figures_in_middle_two_rows + protected_figure_weight * player_protected_figures
-        computer_score = regular_figure_weight * computer_figures + dama_weight * computer_dama + figur_in_back_row_weight * computer_figures_in_back_row + figure_in_middle_box_weight * computer_figures_in_middle_box + figure_in_middle_two_rows * computer_figures_in_middle_two_rows + protected_figure_weight * computer_protected_figures
-
-        return player_score - computer_score
                 
     def is_protected(self, figure):
         row = figure.row
