@@ -55,7 +55,7 @@ class Board:
     def move_figure(self, figure, row, col):
         self.board[figure.row][figure.col], self.board[row][col] = self.board[row][col], self.board[figure.row][figure.col]
         figure.moved(row, col)
-        if row == utilities.rows - 1 or row == 0:
+        if row == utilities.rows - 1 or row == 0 and figure.dama == False:
             figure.make_dama()
             if figure.color == utilities.red:
                 self.red_dame += 1
@@ -64,4 +64,5 @@ class Board:
     
     def get_figure(self, row, col):
         return self.board[row][col]
+
             

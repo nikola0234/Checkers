@@ -33,3 +33,4 @@ class Figure(object):
         self.row = row
         self.col = col
         self.position()
+    
