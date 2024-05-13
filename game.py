@@ -196,20 +196,6 @@ class Game(object):
             return red
         return None
                 
-    def is_protected(self, figure):
-        row = figure.row
-        col = figure.col
-        if row < 7 and col < 7:
-            right_corner = self.board.get_figure(row + 1, col + 1)
-            left_corner = self.board.get_figure(row + 1, col - 1)
-        else:
-            return False
-        if right_corner != 0 and right_corner.color == figure.color:
-            return True
-        if left_corner != 0 and left_corner.color == figure.color:
-            return True
-        return False
-
     def black_move(self, board):
         self.board = board
         self.changing_turn()

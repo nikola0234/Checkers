@@ -34,8 +34,10 @@ def minimax(board, depth, max_player, game, alpha, beta):
 def evaluate_current_board(board):
     return board.black_figures - board.red_figures + (board.black_dame * 0.5 - board.red_dame * 0.5)
 
+# Heuristika, na osnovu koje se racuna vrednost trenutne table. Na osnovu probe, smatram ove vrednosti optimalnim.
+
 def evaluate_current_board1(board):
-    # Define weights for different features
+  
     regular_figure_weight = 5
     dama_weight = 7
     figure_in_back_row_weight = 4
@@ -43,7 +45,6 @@ def evaluate_current_board1(board):
     figure_in_middle_two_rows_weight = 0.5
     protected_figure_weight = 3
 
-    # Initialize counters for different features
     player_figures = 0
     computer_figures = 0
     player_dama = 0
@@ -54,8 +55,9 @@ def evaluate_current_board1(board):
     computer_figures_in_middle_box = 0
     player_figures_in_middle_two_rows = 0
     computer_figures_in_middle_two_rows = 0
+    player_protected_figures = 0
+    computer_protected_figures = 0
 
-    # Iterate through the board to calculate features
     for row in range(8):
         for col in range(8):
             figure = board.get_figure(row, col)
@@ -71,6 +73,8 @@ def evaluate_current_board1(board):
                             player_figures_in_middle_box += 1
                         if 3 <= row <= 4:
                             player_figures_in_middle_two_rows += 1
+                        if is_protected(board, figure):
+                            player_protected_figures += 1
                 elif figure.color == utilities.black:
                     computer_figures += 1
                     if figure.is_dama():
@@ -82,30 +86,41 @@ def evaluate_current_board1(board):
                             computer_figures_in_middle_box += 1
                         if 3 <= row <= 4:
                             computer_figures_in_middle_two_rows += 1
+                        if is_protected(board, figure):
+                            computer_protected_figures += 1
 
-    # Calculate scores for both players based on features and weights
+    
     player_score = (regular_figure_weight * player_figures +
                     dama_weight * player_dama +
                     figure_in_back_row_weight * player_figures_in_back_row +
                     figure_in_middle_box_weight * player_figures_in_middle_box +
-                    figure_in_middle_two_rows_weight * player_figures_in_middle_two_rows)
+                    figure_in_middle_two_rows_weight * player_figures_in_middle_two_rows + 
+                    protected_figure_weight * player_protected_figures)
 
     computer_score = (regular_figure_weight * computer_figures +
                       dama_weight * computer_dama +
                       figure_in_back_row_weight * computer_figures_in_back_row +
                       figure_in_middle_box_weight * computer_figures_in_middle_box +
-                      figure_in_middle_two_rows_weight * computer_figures_in_middle_two_rows)
+                      figure_in_middle_two_rows_weight * computer_figures_in_middle_two_rows + 
+                      protected_figure_weight * computer_protected_figures)
 
-    # Return the difference between computer and player scores
     return computer_score - player_score
 
 
-# def minimax_alpha_beta(node, depth, alfa, beta, maxPlayer, game):
-#     if depth == 0 or game.get_winner != 0:
-#         return game.evaluete_current_board(), None
-    
-#     possible_moves = get_all_moves(game.board )
-    
+# Funckija koja proverava da li je figura zasticena.
+def is_protected(board, figure):
+        row = figure.row
+        col = figure.col
+        if row < 7 and col < 7:
+            right_corner = board.get_figure(row + 1, col + 1)
+            left_corner = board.get_figure(row + 1, col - 1)
+        else:
+            return False
+        if right_corner != 0 and right_corner.color == figure.color:
+            return True
+        if left_corner != 0 and left_corner.color == figure.color:
+            return True
+        return False
 
 
 
