@@ -7,7 +7,7 @@ class Game(object):
     def __init__(self):
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Checkers")
-        self.fps = 60
+        self.fps = 20
         self.board = Board()
         self.clock = pygame.time.Clock()
         self.run = True

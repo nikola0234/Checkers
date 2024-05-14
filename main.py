@@ -23,6 +23,7 @@ def main():
         if game.turn == utilities.black:
             value, new_board = minimax(game.board, 3, utilities.black, game,  float("-inf"), float("inf"))
             possible_moves = get_all_moves(new_board, utilities.black, game)
+            pygame.time.wait(300)
             game.black_move(new_board)
             print(new_board.black_dame)
 
