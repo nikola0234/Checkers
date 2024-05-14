@@ -1,10 +1,11 @@
 import utilities
-from tree import Node
 from copy import deepcopy
 
+
 def minimax(board, depth, max_player, game, alpha, beta):
+    
     if depth == 0 or game.get_winner() != None:
-        return evaluate_current_board1(board), None
+        return evaluate_current_board(board), None
 
     if max_player:
         max_eval = float("-inf")
@@ -31,12 +32,9 @@ def minimax(board, depth, max_player, game, alpha, beta):
                 break  
         return min_eval, best_move
 
-def evaluate_current_board(board):
-    return board.black_figures - board.red_figures + (board.black_dame * 0.5 - board.red_dame * 0.5)
-
 # Heuristika, na osnovu koje se racuna vrednost trenutne table. Na osnovu probe, smatram ove vrednosti optimalnim.
 
-def evaluate_current_board1(board):
+def evaluate_current_board(board):
   
     regular_figure_weight = 5
     dama_weight = 7
@@ -44,6 +42,7 @@ def evaluate_current_board1(board):
     figure_in_middle_box_weight = 2.5
     figure_in_middle_two_rows_weight = 0.5
     protected_figure_weight = 3
+    figure_in_corner_weight = 3
 
     player_figures = 0
     computer_figures = 0
@@ -57,6 +56,8 @@ def evaluate_current_board1(board):
     computer_figures_in_middle_two_rows = 0
     player_protected_figures = 0
     computer_protected_figures = 0
+    player_figures_in_corner = 0
+    computer_figures_in_corner = 0
 
     for row in range(8):
         for col in range(8):
@@ -75,6 +76,8 @@ def evaluate_current_board1(board):
                             player_figures_in_middle_two_rows += 1
                         if is_protected(board, figure):
                             player_protected_figures += 1
+                        if is_figure_in_corner(figure):
+                            player_figures_in_corner += 1
                 elif figure.color == utilities.black:
                     computer_figures += 1
                     if figure.is_dama():
@@ -88,6 +91,8 @@ def evaluate_current_board1(board):
                             computer_figures_in_middle_two_rows += 1
                         if is_protected(board, figure):
                             computer_protected_figures += 1
+                        if is_figure_in_corner(figure):
+                            computer_figures_in_corner += 1
 
     
     player_score = (regular_figure_weight * player_figures +
@@ -95,14 +100,16 @@ def evaluate_current_board1(board):
                     figure_in_back_row_weight * player_figures_in_back_row +
                     figure_in_middle_box_weight * player_figures_in_middle_box +
                     figure_in_middle_two_rows_weight * player_figures_in_middle_two_rows + 
-                    protected_figure_weight * player_protected_figures)
+                    protected_figure_weight * player_protected_figures + 
+                    figure_in_corner_weight * player_figures_in_corner)
 
     computer_score = (regular_figure_weight * computer_figures +
                       dama_weight * computer_dama +
                       figure_in_back_row_weight * computer_figures_in_back_row +
                       figure_in_middle_box_weight * computer_figures_in_middle_box +
                       figure_in_middle_two_rows_weight * computer_figures_in_middle_two_rows + 
-                      protected_figure_weight * computer_protected_figures)
+                      protected_figure_weight * computer_protected_figures + 
+                      figure_in_corner_weight * computer_figures_in_corner)
 
     return computer_score - player_score
 
@@ -121,6 +128,12 @@ def is_protected(board, figure):
         if left_corner != 0 and left_corner.color == figure.color:
             return True
         return False
+
+
+def is_figure_in_corner(figure):
+    if (figure.row == 0 and figure.col == 0) or (figure.row == 0 and figure.col == 7) or (figure.row == 7 and figure.col == 0) or (figure.row == 7 and figure.col == 7):
+        return True
+    return False
 
 
 
@@ -149,17 +162,3 @@ def move_new(figure, move, skipped, board):
     if skipped:
         board.remove(skipped)
     return board
-
-
-
-def build_boards_tree(board, color, game, node, depth):
-    if depth == 0 or game.get_winner() != None:
-        return
-    
-    node.children = get_all_moves(board, color, game)
-    if color == utilities.black:
-        for child in node.children:
-            build_boards_tree(child, utilities.red, game, node, depth - 1)
-    else:
-        for child in node.children:
-            build_boards_tree(child, utilities.black, game, node, depth - 1)

@@ -1,6 +1,8 @@
 import pygame
 from board import Board
 from utilities import width, height, red, black, rows, cols, blue
+from copy import deepcopy
+from minimax import get_all_moves
 
 
 class Game(object):
@@ -14,6 +16,7 @@ class Game(object):
         self.seletced_figure = None
         self.turn = red
         self.allowed_moves = {}
+        self.turn_number = 0
     
     def get_selected_figure(self):
         return self.seletced_figure
@@ -25,9 +28,12 @@ class Game(object):
         return self.turn
     
     def update_display(self):
-        self.board.draw_board(self.screen)
-        self.draw_options(self.allowed_moves)
-        pygame.display.update()
+        if self.board is not None:
+            self.board.draw_board(self.screen)
+            self.draw_options(self.allowed_moves)
+            pygame.display.update()
+        else:    
+            return None
     
     def reset(self):
         self.board = Board()
@@ -73,6 +79,7 @@ class Game(object):
             self.turn = black
         elif self.turn == black:
             self.turn = red
+        self.turn_number += 1
 
 
     def is_move_valid(self, figure, row, col):
@@ -190,6 +197,8 @@ class Game(object):
         return self.board.red_figures == 0 or self.board.black_figures == 0
 
     def get_winner(self):
+        if self.board is None:
+            return None
         if self.board.red_figures == 0:
             return black
         elif self.board.black_figures == 0:
@@ -199,3 +208,18 @@ class Game(object):
     def black_move(self, board):
         self.board = board
         self.changing_turn()
+    
+    def get_all_moves(self, color):
+        moves = []
+        if self.board != None:
+            for row in range(rows):
+                for col in range(cols):
+                    figure = self.board.get_figure(row, col)
+                    if figure != 0 and figure.color == color:
+                        new_board = deepcopy(self.board)
+                        new_fiugre = new_board.get_figure(row, col)
+                        new_board1 = self.move(row, col)
+
+                        moves.append(new_board1)
+        return moves
+    
