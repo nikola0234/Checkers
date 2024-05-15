@@ -183,3 +183,17 @@ def tuple_to_board(tuple_board):
                     board.board[row][col] = 0
         return board
     
+
+
+def evaluate_depth(game):
+    depth = 4
+
+    if game.turn == utilities.black:
+        if game.board.black_figures < 3:
+            depth  = 6
+        if game.board.black_figures < 4:
+            depth = 5
+        if len(get_all_moves(game.board, utilities.black, game)) < 5:
+            depth = 6
+
+    return depth

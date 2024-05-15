@@ -19,6 +19,7 @@ class Game(object):
         self.turn_number = 0
         self.red_skipped = 0
         self.black_skipped = 0
+        self.mode2 = False
     
     def get_selected_figure(self):
         return self.seletced_figure
@@ -108,6 +109,12 @@ class Game(object):
             moves.update(self._traverse_direction(row + 1, min(row + 3, rows), 1, figure.color, left, -1, skipped))
             moves.update(self._traverse_direction(row + 1, min(row + 3, rows), 1, figure.color, right, 1, skipped))
 
+        if self.mode2 == True:
+            for move in moves:
+                if len(moves[move]) > 0:
+                    for move1 in moves:
+                        if len(moves[move1]) == 0:
+                            moves.pop(move1)
         return moves
 
     def _traverse_direction(self, start, stop, step, color, col, direction, skipped):

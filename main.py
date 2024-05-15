@@ -1,7 +1,7 @@
 import pygame
 import utilities
 from game import Game
-from minimax import get_all_moves, minimax, tuple_to_board
+from minimax import get_all_moves, minimax, tuple_to_board, evaluate_depth
 import csv
 from additional.menu import main_menu
 
@@ -54,12 +54,14 @@ def main():
         
 
         if game.turn == utilities.black:
+            depth = evaluate_depth(game)
+            print(depth)
             board_key = game.board.board_as_tuple()
             if board_key in memoization:
                 new_board = tuple_to_board(memoization[board_key])
                 game.black_move(new_board)
                 continue
-            value, new_board = minimax(game.board, 4, utilities.black, game,  float("-inf"), float("inf"))
+            value, new_board = minimax(game.board, depth, utilities.black, game,  float("-inf"), float("inf"))
             if new_board is not None and board_key not in memoization:    
                 memoization[board_key] = new_board.board_as_tuple()
             game.black_move(new_board)
@@ -77,6 +79,7 @@ def main():
                 row, col = utilities.mouse_coordinates(position)
         
                 game.select(row, col)
+                print(len(get_all_moves(game.board, utilities.red, game)))
                 
 
             game.update_display()
