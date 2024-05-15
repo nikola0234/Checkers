@@ -19,6 +19,12 @@ def tuple_to_board(tuple_board):
                     board.board[row][col] = Figure(row, col, utilities.black)
                 elif cell_value == 2:
                     board.board[row][col] = Figure(row, col, utilities.red)
+                elif cell_value == 3:
+                    board.board[row][col] = Figure(row, col, utilities.black)
+                    board.board[row][col].make_dama()
+                elif cell_value == 4:
+                    board.board[row][col] = Figure(row, col, utilities.red)
+                    board.board[row][col].make_dama()
                 elif cell_value == 0:
                     board.board[row][col] = 0
         return board
@@ -36,9 +42,34 @@ def main():
             key, value = eval(row[0]), eval(row[1])
             memoization[key] = value
 
-    print(memoization)
     while run:
         clock.tick(fps)
+
+        if game.get_winner() != None:
+            print('over')
+            with open('moves.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                for key, value in memoization.items():
+                    writer.writerow([key, value])
+            run = False
+        
+        
+        if get_all_moves(game.board, utilities.red, game) == []:
+            print("Black wins")
+            with open('moves.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                for key, value in memoization.items():
+                    writer.writerow([key, value])
+            run = False
+        
+        if get_all_moves(game.board, utilities.black, game) == []: 
+            print("Red wins")
+            with open('moves.csv', 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile)
+                for key, value in memoization.items():
+                    writer.writerow([key, value])
+            run = False
+        
 
         if game.turn == utilities.black:
             board_key = game.board.board_as_tuple()
@@ -51,30 +82,6 @@ def main():
                 memoization[board_key] = new_board.board_as_tuple()
             game.black_move(new_board)
 
-        if game.get_winner() != None:
-            print(game.get_winner())
-            with open('moves.csv', 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                for key, value in memoization.items():
-                    writer.writerow([key, value])
-            run = False
-        
-        if get_all_moves(game.board, utilities.red, game) == {}:
-            print("Black wins")
-            with open('moves.csv', 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                for key, value in memoization.items():
-                    writer.writerow([key, value])
-            run = False
-        
-        if get_all_moves(game.board, utilities.black, game) == {}: 
-            print("Red wins")
-            with open('moves.csv', 'w', newline='') as csvfile:
-                writer = csv.writer(csvfile)
-                for key, value in memoization.items():
-                    writer.writerow([key, value])
-            run = False
-        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 with open('moves.csv', 'w', newline='') as csvfile:

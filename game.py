@@ -17,6 +17,8 @@ class Game(object):
         self.turn = red
         self.allowed_moves = {}
         self.turn_number = 0
+        self.red_skipped = 0
+        self.black_skipped = 0
     
     def get_selected_figure(self):
         return self.seletced_figure
@@ -28,19 +30,13 @@ class Game(object):
         return self.turn
     
     def update_display(self):
-        if self.board is not None:
+        if self.board is not None:    
             self.board.draw_board(self.screen)
             self.draw_options(self.allowed_moves)
             pygame.display.update()
-        else:    
+        else:
             return None
     
-    def reset(self):
-        self.board = Board()
-        self.seletced_figure = None
-        self.turn = red
-        self.allowed_moves = {}
-
     def select(self, row, col):
         if self.seletced_figure:
             result = self.move(row, col)
@@ -68,7 +64,16 @@ class Game(object):
                 if row1 >= 0 and col1 >= 0 and row == row1 and col == col1:  
                     skipped_figures.append(self.allowed_moves[(row1, col1)])
             for skipped_figure in skipped_figures:
-                self.board.remove(skipped_figure)  
+                self.board.remove(skipped_figure)
+                print(skipped_figures)
+                if self.turn == red and len(skipped_figures[0]) > 0:
+                    for skip in range(len(skipped_figure)):
+                        self.black_skipped += 1
+                        print('+1')
+                elif self.turn == black and len(skipped_figures[0]) > 0:
+                    for skip in range(len(skipped_figure)):
+                        self.red_skipped += 1
+                        print('+1') 
         else:
             return False
         self.changing_turn()  
@@ -197,11 +202,9 @@ class Game(object):
         return self.board.red_figures == 0 or self.board.black_figures == 0
 
     def get_winner(self):
-        if self.board is None:
-            return None
-        if self.board.red_figures == 0:
+        if self.red_skipped == 12:
             return black
-        elif self.board.black_figures == 0:
+        elif self.black_skipped == 12:
             return red
         return None
                 

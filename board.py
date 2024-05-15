@@ -78,10 +78,14 @@ class Board:
                 figure = self.board[row][col]
                 if figure == 0:
                     tuple_row.append(0)
-                elif figure.color == utilities.black:
+                elif figure.color == utilities.black and not figure.is_dama():
                     tuple_row.append(1)
-                elif figure.color == utilities.red:
+                elif figure.color == utilities.red and not figure.is_dama():
                     tuple_row.append(2)
+                elif figure.color == utilities.black and figure.is_dama():
+                    tuple_row.append(3)
+                elif figure.color == utilities.red and figure.is_dama():
+                    tuple_row.append(4)
             tuple_board.append(tuple(tuple_row))
         return tuple(tuple_board)
 
