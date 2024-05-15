@@ -1,5 +1,7 @@
 import utilities
 from copy import deepcopy
+from board import Board
+from figures import Figure
 
 
 def minimax(board, depth, max_player, game, alpha, beta):
@@ -162,3 +164,22 @@ def move_new(figure, move, skipped, board):
     if skipped:
         board.remove(skipped)
     return board
+
+def tuple_to_board(tuple_board):
+        board = Board()
+        for row, tuple_row in enumerate(tuple_board):
+            for col, cell_value in enumerate(tuple_row):
+                if cell_value == 1:
+                    board.board[row][col] = Figure(row, col, utilities.black)
+                elif cell_value == 2:
+                    board.board[row][col] = Figure(row, col, utilities.red)
+                elif cell_value == 3:
+                    board.board[row][col] = Figure(row, col, utilities.black)
+                    board.board[row][col].make_dama()
+                elif cell_value == 4:
+                    board.board[row][col] = Figure(row, col, utilities.red)
+                    board.board[row][col].make_dama()
+                elif cell_value == 0:
+                    board.board[row][col] = 0
+        return board
+    

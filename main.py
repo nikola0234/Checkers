@@ -1,34 +1,14 @@
 import pygame
 import utilities
-from board import Board
 from game import Game
-from minimax import get_all_moves, minimax
-from figures import Figure
+from minimax import get_all_moves, minimax, tuple_to_board
 import csv
+from additional.menu import main_menu
 
 screen = pygame.display.set_mode((utilities.width, utilities.height))
 memoization = {}
 
 pygame.display.set_caption("Checkers")
-
-def tuple_to_board(tuple_board):
-        board = Board()
-        for row, tuple_row in enumerate(tuple_board):
-            for col, cell_value in enumerate(tuple_row):
-                if cell_value == 1:
-                    board.board[row][col] = Figure(row, col, utilities.black)
-                elif cell_value == 2:
-                    board.board[row][col] = Figure(row, col, utilities.red)
-                elif cell_value == 3:
-                    board.board[row][col] = Figure(row, col, utilities.black)
-                    board.board[row][col].make_dama()
-                elif cell_value == 4:
-                    board.board[row][col] = Figure(row, col, utilities.red)
-                    board.board[row][col].make_dama()
-                elif cell_value == 0:
-                    board.board[row][col] = 0
-        return board
-    
 
 def main():
     run = True
@@ -44,6 +24,8 @@ def main():
 
     while run:
         clock.tick(fps)
+
+        screen.fill('black')
 
         if game.get_winner() != None:
             print('over')
@@ -100,4 +82,4 @@ def main():
             game.update_display()
     pygame.quit()
 if __name__ == "__main__":
-    main()
+    main_menu(screen, main)
