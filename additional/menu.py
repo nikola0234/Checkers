@@ -48,6 +48,12 @@ def main_menu(screen, play, game):
         MENU_TEXT = get_font(40).render("WELCOME TO CHECKERS", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(400, 100))
 
+        MODE1_TEXT = get_font(20).render("MODE 1: Skipping is optional ", True, "#b68f40")
+        MODE1_RECT = MODE1_TEXT.get_rect(center=(400, 250))
+
+        MODE2_TEXT = get_font(20).render("MODE 2: Skipping is mandatory", True, "#b68f40")
+        MODE2_RECT = MODE2_TEXT.get_rect(center=(400, 450))
+
         PLAY_BUTTON = Button(image=pygame.image.load("./images/Play Rect.png"), pos=(400, 350), 
                             text_input="MODE 1", font=get_font(30), base_color="#d7fcd4", hovering_color="White")
 		
@@ -58,6 +64,8 @@ def main_menu(screen, play, game):
                             text_input="QUIT", font=get_font(30), base_color="#d7fcd4", hovering_color="White")
 
         screen.blit(MENU_TEXT, MENU_RECT)
+        screen.blit(MODE1_TEXT, MODE1_RECT)
+        screen.blit(MODE2_TEXT, MODE2_RECT)
 
         for button in [PLAY_BUTTON, QUIT_BUTTON, PLAY_BUTTON2]:
             button.changeColor(MENU_MOUSE_POS)
@@ -80,5 +88,5 @@ def main_menu(screen, play, game):
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
-
+                    
         pygame.display.update()

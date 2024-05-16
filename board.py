@@ -21,7 +21,7 @@ class Board:
                 if row % 2 == col % 2:
                     pygame.draw.rect(screen, utilities.white, (row * utilities.square_size, col * utilities.square_size, utilities.square_size, utilities.square_size))
                 else:
-                    pygame.draw.rect(screen, utilities.green, (row * utilities.square_size, col * utilities.square_size, utilities.square_size, utilities.square_size))
+                    pygame.draw.rect(screen, utilities.green, (row * utilities.square_size, col * utilities.square_size, utilities.square_size, utilities.square_size))        
 
     def draw_figure(self):
         for row in range(utilities.rows):
@@ -34,6 +34,7 @@ class Board:
                     elif row > 4:
                         figure = Figure(row, col, utilities.red)
                 self.board[row].append(figure)
+        print(self.board_as_tuple())
 
     
     def draw_board(self, screen):
@@ -54,17 +55,27 @@ class Board:
                 self.black_figures -= 1
     
     def move_figure(self, figure, row, col):
-        self.board[figure.row][figure.col], self.board[row][col] = self.board[row][col], self.board[figure.row][figure.col]
-        figure.moved(row, col)
-        if row == utilities.rows - 1 or row == 0 and figure.dama == False:
-            figure.make_dama()
-            if figure.color == utilities.red:
-                self.red_dame += 1
-            else:
-                self.black_dame += 1
+        if figure != 0:
+            self.board[figure.row][figure.col], self.board[row][col] = self.board[row][col], self.board[figure.row][figure.col]
+            figure.moved(row, col)
+            if row == utilities.rows - 1 or row == 0:
+                figure.make_dama()
+                if figure.color == utilities.red:
+                    self.red_dame += 1
+                else:
+                    self.black_dame += 1
     
     def get_figure(self, row, col):
         return self.board[row][col]
+    
+    def get_all_figures(self, color):
+        figures = []
+        for row in self.board:
+            for figure in row:
+                if figure != 0 and figure.color == color:
+                    figures.append(figure)
+        return figures
+
     
     def board_as_tuple(self):
         """

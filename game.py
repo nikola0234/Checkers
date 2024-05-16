@@ -6,8 +6,8 @@ from minimax import get_all_moves
 
 
 class Game(object):
-    def __init__(self):
-        self.screen = pygame.display.set_mode((width, height))
+    def __init__(self, screen):
+        self.screen = screen
         pygame.display.set_caption("Checkers")
         self.fps = 20
         self.board = Board()
@@ -80,11 +80,9 @@ class Game(object):
                 if self.turn == red and len(skipped_figures[0]) > 0:
                     for skip in range(len(skipped_figure)):
                         self.black_skipped += 1
-                        print('+1')
                 elif self.turn == black and len(skipped_figures[0]) > 0:
                     for skip in range(len(skipped_figure)):
                         self.red_skipped += 1
-                        print('+1') 
         else:
             return False
         self.changing_turn()  
@@ -105,57 +103,86 @@ class Game(object):
         return False
 
 
-    def get_valid_moves(self, figure):
+    def get_valid_moves(self, piece):
         moves = {}
-        skipped = []
-        left = figure.col - 1
-        right = figure.col + 1
-        row = figure.row
+        left = piece.col - 1
+        right = piece.col + 1
+        row = piece.row
 
-        if figure.color == red or figure.dama:
-            moves.update(self._traverse_direction(row - 1, max(row - 3, -1), -1, figure.color, left, -1, skipped))
-            moves.update(self._traverse_direction(row - 1, max(row - 3, -1), -1, figure.color, right, 1, skipped ))
-        if figure.color == black or figure.dama:
-            moves.update(self._traverse_direction(row + 1, min(row + 3, rows), 1, figure.color, left, -1, skipped))
-            moves.update(self._traverse_direction(row + 1, min(row + 3, rows), 1, figure.color, right, 1, skipped))
-
+        if piece.color == red or piece.dama:
+            moves.update(self._traverse_left(row -1, max(row-3, -1), -1, piece.color, left))
+            moves.update(self._traverse_right(row -1, max(row-3, -1), -1, piece.color, right))
+        if piece.color == black or piece.dama:
+            moves.update(self._traverse_left(row +1, min(row+3, rows), 1, piece.color, left))
+            moves.update(self._traverse_right(row +1, min(row+3, rows), 1, piece.color, right))
+    
         return moves
 
-    def _traverse_direction(self, start, stop, step, color, col, direction, skipped):
+    def _traverse_left(self, start, stop, step, color, left, skipped=[]):
         moves = {}
         last = []
         for r in range(start, stop, step):
-            if direction == -1 and col < 0:
+            if left < 0:
                 break
-            if direction == 1 and col >= cols:
-                break
-
-            current = self.board.get_figure(r, col)
+            
+            current = self.board.board[r][left]
             if current == 0:
                 if skipped and not last:
                     break
                 elif skipped:
-                    moves[(r, col)] = last + skipped
+                    moves[(r, left)] = last + skipped
                 else:
-                    moves[(r, col)] = last
-
+                    moves[(r, left)] = last
+                
                 if last:
                     if step == -1:
-                        row = max(r - 3, 0)
+                        row = max(r-3, 0)
                     else:
-                        row = min(r + 3, rows)
-                    moves.update(self._traverse_direction(r + step, row, step, color, col - 1, -1, skipped=last))
-                    moves.update(self._traverse_direction(r + step, row, step, color, col + 1, 1, skipped=last))
+                        row = min(r+3, rows)
+                    moves.update(self._traverse_left(r+step, row, step, color, left-1,skipped=last))
+                    moves.update(self._traverse_right(r+step, row, step, color, left+1,skipped=last))
                 break
             elif current.color == color:
                 break
             else:
                 last = [current]
 
-            col += direction
-
+            left -= 1
+        
         return moves
-    
+
+    def _traverse_right(self, start, stop, step, color, right, skipped=[]):
+        moves = {}
+        last = []
+        for r in range(start, stop, step):
+            if right >= cols:
+                break
+            
+            current = self.board.board[r][right]
+            if current == 0:
+                if skipped and not last:
+                    break
+                elif skipped:
+                    moves[(r,right)] = last + skipped
+                else:
+                    moves[(r, right)] = last
+                
+                if last:
+                    if step == -1:
+                        row = max(r-3, 0)
+                    else:
+                        row = min(r+3, rows)
+                    moves.update(self._traverse_left(r+step, row, step, color, right-1,skipped=last))
+                    moves.update(self._traverse_right(r+step, row, step, color, right+1,skipped=last))
+                break
+            elif current.color == color:
+                break
+            else:
+                last = [current]
+
+            right += 1
+        
+        return moves
 
     def get_allowed_moves(self, figure):
         allowed_moves = {}

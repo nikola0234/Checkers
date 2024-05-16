@@ -7,44 +7,50 @@ from figures import Figure
 def minimax(board, depth, max_player, game, alpha, beta):
     
     if depth == 0 or game.get_winner() != None:
-        return evaluate_current_board(board), None
+        return evaluate_current_board1(board), board
 
     if max_player:
         max_eval = float("-inf")
         best_move = None
         for move in get_all_moves(board, utilities.black, game):
-            evaluation, _ = minimax(move, depth - 1, False, game, alpha, beta)
+            evaluation = minimax(move, depth - 1, False, game, alpha, beta)[0]
             max_eval = max(max_eval, evaluation)
             if max_eval == evaluation:
                 best_move = move
             alpha = max(alpha, evaluation)
             if beta <= alpha:
-                break  
+                break
+        print(max_eval)  
         return max_eval, best_move
     else:
         min_eval = float("inf")
         best_move = None
-        for move in get_all_moves(board, utilities.red, game):
-            evaluation, _ = minimax(move, depth - 1, True, game, alpha, beta)
+        for move in get_all_moves1(board, utilities.red, game):
+            evaluation = minimax(move, depth - 1, True, game, alpha, beta)[0]
             min_eval = min(min_eval, evaluation)
             if min_eval == evaluation:
                 best_move = move
             beta = min(beta, evaluation)
             if beta <= alpha:
-                break  
+                break
+        print(min_eval)  
         return min_eval, best_move
 
 # Heuristika, na osnovu koje se racuna vrednost trenutne table. Na osnovu probe, smatram ove vrednosti optimalnim.
 
+def evaluate_current_board1(board):
+    return board.black_figures - board.red_figures + 0.5*(board.black_dame - board.red_dame)
+
 def evaluate_current_board(board):
   
     regular_figure_weight = 5
-    dama_weight = 7
+    dama_weight = 7.75
     figure_in_back_row_weight = 4
     figure_in_middle_box_weight = 2.5
     figure_in_middle_two_rows_weight = 0.5
     protected_figure_weight = 3
     figure_in_corner_weight = 3
+    vulnerable_figure_weight = -3
 
     player_figures = 0
     computer_figures = 0
@@ -60,6 +66,8 @@ def evaluate_current_board(board):
     computer_protected_figures = 0
     player_figures_in_corner = 0
     computer_figures_in_corner = 0
+    player_vulnerable_figures = 0
+    computer_vulnerable_figures = 0
 
     for row in range(8):
         for col in range(8):
@@ -80,6 +88,8 @@ def evaluate_current_board(board):
                             player_protected_figures += 1
                         if is_figure_in_corner(figure):
                             player_figures_in_corner += 1
+                        if is_figure_vulnerable(board, figure):
+                            player_vulnerable_figures += 1
                 elif figure.color == utilities.black:
                     computer_figures += 1
                     if figure.is_dama():
@@ -95,7 +105,8 @@ def evaluate_current_board(board):
                             computer_protected_figures += 1
                         if is_figure_in_corner(figure):
                             computer_figures_in_corner += 1
-
+                        if is_figure_vulnerable(board, figure):
+                            computer_vulnerable_figures += 1
     
     player_score = (regular_figure_weight * player_figures +
                     dama_weight * player_dama +
@@ -103,7 +114,8 @@ def evaluate_current_board(board):
                     figure_in_middle_box_weight * player_figures_in_middle_box +
                     figure_in_middle_two_rows_weight * player_figures_in_middle_two_rows + 
                     protected_figure_weight * player_protected_figures + 
-                    figure_in_corner_weight * player_figures_in_corner)
+                    figure_in_corner_weight * player_figures_in_corner +
+                    vulnerable_figure_weight * player_vulnerable_figures)
 
     computer_score = (regular_figure_weight * computer_figures +
                       dama_weight * computer_dama +
@@ -111,7 +123,8 @@ def evaluate_current_board(board):
                       figure_in_middle_box_weight * computer_figures_in_middle_box +
                       figure_in_middle_two_rows_weight * computer_figures_in_middle_two_rows + 
                       protected_figure_weight * computer_protected_figures + 
-                      figure_in_corner_weight * computer_figures_in_corner)
+                      figure_in_corner_weight * computer_figures_in_corner +
+                      vulnerable_figure_weight * computer_vulnerable_figures)
 
     return computer_score - player_score
 
@@ -137,7 +150,31 @@ def is_figure_in_corner(figure):
         return True
     return False
 
-
+def is_figure_vulnerable(board, figure):
+    row = figure.row
+    col = figure.col
+    
+    if figure.color == utilities.red:
+        if row < 7 and col < 7 and row > 0 and col > 0:
+            right_corner = board.get_figure(row + 1, col + 1)
+            left_corner = board.get_figure(row + 1, col - 1)
+        else:
+            return False
+        if right_corner == 0 or(right_corner.color == utilities.black):
+            return True
+        if left_corner == 0 or(left_corner.color == utilities.black):
+            return True
+    elif figure.color == utilities.black:
+        if row > 0 and col > 0 and row < 7 and col < 7:
+            right_corner = board.get_figure(row - 1, col + 1)
+            left_corner = board.get_figure(row - 1, col - 1)
+        else:
+            return False
+        if right_corner == 0 or(right_corner.color == utilities.red):
+            return True
+        if left_corner == 0 or(left_corner.color == utilities.red):
+            return True
+    return False
 
 # Funkcija koja vraca sve moguce poteze za odredjenu boju.
 def get_all_moves(board, color, game):
@@ -156,6 +193,20 @@ def get_all_moves(board, color, game):
                     
                         moves.append(new_board1)
     return moves
+
+def get_all_moves1(board, color, game):
+    moves = []
+
+    for piece in board.get_all_figures(color):
+        valid_moves = game.get_valid_moves(piece)
+        for move, skip in valid_moves.items():
+            temp_board = deepcopy(board)
+            temp_piece = temp_board.get_figure(piece.row, piece.col)
+            new_board = move_new(temp_piece, move, skip, temp_board)
+            moves.append(new_board)
+    
+    return moves
+
 
 
 # Funkcija koja doprema sledece stanje(tablu nakog odigranog poteza).
