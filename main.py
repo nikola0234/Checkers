@@ -10,9 +10,10 @@ memoization = {}
 
 pygame.display.set_caption("Checkers")
 
+game = Game()
+
 def main():
     run = True
-    game = Game()
     clock = game.clock
     fps = game.fps
     
@@ -85,4 +86,4 @@ def main():
             game.update_display()
     pygame.quit()
 if __name__ == "__main__":
-    main_menu(screen, main)
+    main_menu(screen, main, game)

@@ -51,6 +51,16 @@ class Game(object):
         if figure != 0 and figure.color == self.turn:    
             self.seletced_figure = figure
             self.allowed_moves = self.get_valid_moves(self.seletced_figure)
+            if self.mode2 == True:
+
+                moves_copy = self.allowed_moves.copy()
+
+                for move in moves_copy:
+                    if len(moves_copy[move]) > 0:
+                        for move1 in moves_copy:
+                            if len(moves_copy[move1]) == 0:
+                                self.allowed_moves.pop(move1) 
+
             if self.seletced_figure:
                 return True
             return False
@@ -109,12 +119,6 @@ class Game(object):
             moves.update(self._traverse_direction(row + 1, min(row + 3, rows), 1, figure.color, left, -1, skipped))
             moves.update(self._traverse_direction(row + 1, min(row + 3, rows), 1, figure.color, right, 1, skipped))
 
-        if self.mode2 == True:
-            for move in moves:
-                if len(moves[move]) > 0:
-                    for move1 in moves:
-                        if len(moves[move1]) == 0:
-                            moves.pop(move1)
         return moves
 
     def _traverse_direction(self, start, stop, step, color, col, direction, skipped):

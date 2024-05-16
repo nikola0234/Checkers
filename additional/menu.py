@@ -39,7 +39,7 @@ class Button():
 			self.text = self.font.render(self.text_input, True, self.base_color)
 			
 
-def main_menu(screen, play):
+def main_menu(screen, play, game):
     while True:
         screen.blit(background, (0,0))
 
@@ -70,6 +70,13 @@ def main_menu(screen, play):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     play()
+				
+                if PLAY_BUTTON2.checkForInput(MENU_MOUSE_POS):
+				    
+                    game.mode2 = True
+					
+                    play()
+                
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
