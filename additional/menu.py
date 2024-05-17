@@ -90,3 +90,20 @@ def main_menu(screen, play, game):
                     sys.exit()
                     
         pygame.display.update()
+
+def open_victory_screen(screen):
+    screen.fill("#b68f40")
+    VICTORY_TEXT = get_font(40).render("VICTORY", True, "White")
+    VICTORY_RECT = VICTORY_TEXT.get_rect(center=(400, 200))
+    screen.blit(VICTORY_TEXT, VICTORY_RECT)
+    pygame.display.update()
+    pygame.time.wait(3000)
+
+def open_loose_screen(screen):
+    red = (255, 10, 10)
+    screen.fill(red)
+    LOOSE_TEXT = get_font(40).render("LOOSE", True, "White")
+    LOOSE_RECT = LOOSE_TEXT.get_rect(center=(400, 200))
+    screen.blit(LOOSE_TEXT, LOOSE_RECT)
+    pygame.display.update()
+    pygame.time.wait(3000)

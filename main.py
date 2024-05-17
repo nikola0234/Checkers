@@ -3,7 +3,7 @@ import utilities
 from game import Game
 from minimax import get_all_moves, minimax, tuple_to_board, evaluate_depth
 import csv
-from additional.menu import main_menu
+from additional.menu import main_menu, open_victory_screen, open_loose_screen
 
 screen = pygame.display.set_mode((utilities.width, utilities.height))
 memoization = {}
@@ -63,6 +63,7 @@ def main():
                     writer = csv.writer(csvfile)
                     for key, value in memoization.items():
                         writer.writerow([key, value])
+            open_loose_screen(screen)
             run = False
         
         elif get_all_moves(game.board, utilities.black, game) == []: 
@@ -77,6 +78,7 @@ def main():
                     writer = csv.writer(csvfile)
                     for key, value in memoization.items():
                         writer.writerow([key, value])
+            open_victory_screen(screen)
             run = False
         
         if game.turn == utilities.black:

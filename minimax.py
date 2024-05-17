@@ -67,6 +67,10 @@ def evaluate_current_board(board):
     player_vulnerable_figures = 0
     computer_vulnerable_figures = 0
 
+    if board.red_figures < 3:
+        regular_figure_weight = 50
+        dama_weight = 60
+
     for row in range(8):
         for col in range(8):
             figure = board.get_figure(row, col)
