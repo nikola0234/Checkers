@@ -36,6 +36,14 @@ class Board:
                 self.board[row].append(figure)
         print(self.board_as_tuple())
 
+    def get_all_figures(self, color):
+        figures = []
+        for row in self.board:
+            for figure in row:
+                if figure != 0 and figure.color == color:
+                    figures.append(figure)
+        return figures
+
     
     def draw_board(self, screen):
         self.create_board(screen)
@@ -68,20 +76,8 @@ class Board:
     def get_figure(self, row, col):
         return self.board[row][col]
     
-    def get_all_figures(self, color):
-        figures = []
-        for row in self.board:
-            for figure in row:
-                if figure != 0 and figure.color == color:
-                    figures.append(figure)
-        return figures
-
-    
     def board_as_tuple(self):
-        """
-        Represents the board as a tuple.
-        Black figures are represented by 1, empty cells by 0, and red figures by 2.
-        """
+
         tuple_board = []
         for row in range(utilities.rows):
             tuple_row = []
@@ -184,9 +180,6 @@ class Board:
 
     @classmethod
     def tuple_to_board(cls, tuple_board):
-        """
-        Reconstructs the board with figures from a tuple representation.
-        """
         board = cls()
         for row, tuple_row in enumerate(tuple_board):
             for col, cell_value in enumerate(tuple_row):

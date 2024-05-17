@@ -3,58 +3,20 @@ from copy import deepcopy
 from board import Board
 from figures import Figure
 
-
-def minimax(board, depth, max_player, game, alpha, beta):
-    
-    if depth == 0 or game.get_winner() != None:
-        return evaluate_current_board(board), board
-
-    if max_player:
-        max_eval = float("-inf")
-        best_move = None
-        for move in get_all_moves(board, utilities.black, game):
-            if move.board_as_tuple() == ((0, 1, 0, 1, 0, 1, 0, 1), (1, 0, 1, 0, 1, 0, 1, 0), (0, 1, 0, 1, 0, 1, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (2, 0, 2, 0, 2, 0, 2, 0), (0, 2, 0, 2, 0, 2, 0, 2), (2, 0, 2, 0, 2, 0, 2, 0)):
-                continue    
-            evaluation = minimax(move, depth - 1, False, game, alpha, beta)[0]
-            max_eval = max(max_eval, evaluation)
-            if max_eval == evaluation:
-                best_move = move
-            alpha = max(alpha, evaluation)
-            if beta <= alpha:
-                break
-        print(max_eval)  
-        return max_eval, best_move
-    else:
-        min_eval = float("inf")
-        best_move = None
-        for move in get_all_moves(board, utilities.red, game):
-            if move.board_as_tuple() == ((0, 1, 0, 1, 0, 1, 0, 1), (1, 0, 1, 0, 1, 0, 1, 0), (0, 1, 0, 1, 0, 1, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (2, 0, 2, 0, 2, 0, 2, 0), (0, 2, 0, 2, 0, 2, 0, 2), (2, 0, 2, 0, 2, 0, 2, 0)):
-                continue
-            evaluation = minimax(move, depth - 1, True, game, alpha, beta)[0]
-            min_eval = min(min_eval, evaluation)
-            if min_eval == evaluation:
-                best_move = move
-            beta = min(beta, evaluation)
-            if beta <= alpha:
-                break
-        print(min_eval)  
-        return min_eval, best_move
-
-
-def minimax1(position, depth, max_player, game, alfa, beta):
+def minimax(position, depth, max_player, game, alfa, beta):
     if depth == 0:
         return evaluate_current_board(position), position
     
     if max_player:
         maxEval = float('-inf')
         best_move = None
-        for move in get_all_moves1(position, utilities.black, game):
+        for move in get_all_moves(position, utilities.black, game):
             if move.board_as_tuple() == ((0, 1, 0, 1, 0, 1, 0, 1), (1, 0, 1, 0, 1, 0, 1, 0), (0, 1, 0, 1, 0, 1, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (2, 0, 2, 0, 2, 0, 2, 0), (0, 2, 0, 2, 0, 2, 0, 2), (2, 0, 2, 0, 2, 0, 2, 0)):
                 continue
-            evaluation = minimax1(move, depth-1, False, game, alfa, beta)[0]
+            evaluation = minimax(move, depth-1, False, game, alfa, beta)[0]
             maxEval = max(maxEval, evaluation)
             alfa = max(alfa, evaluation)
-            if beta <= alfa * 0.5:
+            if beta <= alfa * 0.75:
                 break
             if maxEval == evaluation:
                 best_move = move
@@ -62,13 +24,13 @@ def minimax1(position, depth, max_player, game, alfa, beta):
     else:
         minEval = float('inf')
         best_move = None
-        for move in get_all_moves1(position, utilities.red, game):
+        for move in get_all_moves(position, utilities.red, game):
             if move.board_as_tuple() == ((0, 1, 0, 1, 0, 1, 0, 1), (1, 0, 1, 0, 1, 0, 1, 0), (0, 1, 0, 1, 0, 1, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (2, 0, 2, 0, 2, 0, 2, 0), (0, 2, 0, 2, 0, 2, 0, 2), (2, 0, 2, 0, 2, 0, 2, 0)):
                 continue
-            evaluation = minimax1(move, depth-1, True, game, alfa, beta)[0]
+            evaluation = minimax(move, depth-1, True, game, alfa, beta)[0]
             minEval = min(minEval, evaluation)
             beta = min(beta, evaluation)
-            if beta <= alfa * 0.5:
+            if beta <= alfa * 0.75:
                 break
             if minEval == evaluation:
                 best_move = move
@@ -76,9 +38,6 @@ def minimax1(position, depth, max_player, game, alfa, beta):
 
 
 # Heuristika, na osnovu koje se racuna vrednost trenutne table. Na osnovu probe, smatram ove vrednosti optimalnim.
-
-def evaluate_current_board1(board):
-    return board.black_figures - board.red_figures + 0.5*(board.black_dame - board.red_dame)
 
 def evaluate_current_board(board):
   
@@ -218,32 +177,15 @@ def is_figure_vulnerable(board, figure):
 # Funkcija koja vraca sve moguce poteze za odredjenu boju.
 def get_all_moves(board, color, game):
     moves = []
-    if board != None:
-        for row in range(utilities.rows):
-            for col in range(utilities.cols):
-                figure = board.get_figure(row, col)
-                if figure != 0 and figure.color == color:
-                    valid_moves = game.get_valid_moves(figure)
-
-                    for move, skipped in valid_moves.items():
-                        new_board = deepcopy(board)
-                        new_figure = new_board.get_figure(row, col)
-                        new_board1 = move_new(new_figure, move, skipped, new_board)
-                    
-                        moves.append(new_board1)
-    return moves
-
-def get_all_moves1(board, color, game):
-    moves = []
-
-    for piece in board.get_all_figures(color):
-        valid_moves = board.get_valid_moves(piece)
-        for move, skip in valid_moves.items():
-            temp_board = deepcopy(board)
-            temp_piece = temp_board.get_figure(piece.row, piece.col)
-            new_board = move_new(temp_piece, move, skip, temp_board)
-            moves.append(new_board)
-   
+    if board is not None:    
+        for piece in board.get_all_figures(color):
+            valid_moves = board.get_valid_moves(piece)
+            for move, skip in valid_moves.items():
+                temp_board = deepcopy(board)
+                temp_piece = temp_board.get_figure(piece.row, piece.col)
+                new_board = move_new(temp_piece, move, skip, temp_board)
+                moves.append(new_board)
+    
     return moves
 
 

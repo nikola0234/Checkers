@@ -2,7 +2,7 @@ import pygame
 from board import Board
 from utilities import width, height, red, black, rows, cols, blue
 from copy import deepcopy
-from minimax import get_all_moves1
+from minimax import get_all_moves
 
 
 class Game(object):
@@ -46,25 +46,26 @@ class Game(object):
                 self.allowed_moves = {}
                 self.select(row, col)
         
-        figure = self.board.get_figure(row, col)
+        if self.board is not None:    
+            figure = self.board.get_figure(row, col)
 
-        if figure != 0 and figure.color == self.turn:    
-            self.seletced_figure = figure
-            self.allowed_moves = self.get_valid_moves(self.seletced_figure)
-            if self.mode2 == True:
+            if figure != 0 and figure.color == self.turn:    
+                self.seletced_figure = figure
+                self.allowed_moves = self.get_valid_moves(self.seletced_figure)
+                if self.mode2 == True:
 
-                moves_copy = self.allowed_moves.copy()
+                    moves_copy = self.allowed_moves.copy()
 
-                for move in moves_copy:
-                    if len(moves_copy[move]) > 0:
-                        for move1 in moves_copy:
-                            if len(moves_copy[move1]) == 0:
-                                self.allowed_moves.pop(move1) 
+                    for move in moves_copy:
+                        if len(moves_copy[move]) > 0:
+                            for move1 in moves_copy:
+                                if len(moves_copy[move1]) == 0:
+                                    self.allowed_moves.pop(move1) 
 
-            if self.seletced_figure:
-                return True
-            return False
-        
+                if self.seletced_figure:
+                    return True
+                return False
+            
     def move(self, row, col):
         figure = self.board.get_figure(row, col)
         
@@ -177,51 +178,7 @@ class Game(object):
             right += 1
         
         return moves
-
-    def get_allowed_moves(self, figure):
-        allowed_moves = {}
-
-        if figure == 0 or figure.color != self.turn:
-            return allowed_moves
-        
-        row = figure.row
-        col = figure.col
-
-        if not figure.is_dama():
-            if figure.color == red:    
-                directions = [(-1, -1), (-1, 1)]
-            else:
-                directions = [(1, -1), (1, 1)]
-        if figure.is_dama():
-            directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
-
-        def check_options(allowed_moves, new_row, new_col, directions, dir, dic):
-            if 0 <= new_row < rows and 0 <= new_col < cols and new_row >= 0 and new_col >= 0 and self.board.get_figure(new_row, new_col) == 0 and (new_row, new_col) not in allowed_moves:
-                allowed_moves[(new_row, new_col)] = []
-            
-            elif 0 <= new_row < rows and 0 <= new_col < cols and new_row >= 0 and new_col >= 0 and self.board.get_figure(new_row, new_col) != 0 and self.board.get_figure(new_row, new_col).color == figure.color and (new_row, new_col) not in allowed_moves:
-                return
-                
-            elif 0 <= new_row < rows and 0 <= new_col < cols and self.board.get_figure(new_row, new_col) != 0 and self.board.get_figure(new_row, new_col).color != figure.color and (new_row, new_col) not in allowed_moves:
-                after_row = new_row + dir
-                after_col = new_col + dic
-                skipped_figure = self.board.get_figure(new_row, new_col)
-                allowed_moves[(after_row, after_col)] = [skipped_figure]
-
-                if 0 <= after_row < rows and 0 <= after_col < cols and self.board.get_figure(after_row, after_col) == 0:
-                    
-                    if 0 <= after_row + dir < rows and 0 <= after_col + dic < cols and after_row + dir >= 0 and after_col + dic >= 0 and self.board.get_figure(after_row + dir, after_col + dic) != 0 and self.board.get_figure(after_row + dir, after_col + dic).color != figure.color:
-                        check_options(allowed_moves, after_row + dir, after_col + dic, directions, dir, dic)
-                
-                elif 0 <= after_row < rows and 0 <= after_col < cols and self.board.get_figure(after_row, after_col) != 0:
-                    allowed_moves.pop((after_row, after_col))
-
-        for dir, dic in directions:
-            new_row = row + dir
-            new_col = col + dic 
-            check_options(allowed_moves, new_row, new_col, directions, dir, dic)
-        
-        return allowed_moves
+    
 
     def draw_options(self, moves):
         for move in moves:

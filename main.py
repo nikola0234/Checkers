@@ -1,7 +1,7 @@
 import pygame, sys
 import utilities
 from game import Game
-from minimax import get_all_moves, minimax1, tuple_to_board, evaluate_depth, get_all_moves1
+from minimax import get_all_moves, minimax, tuple_to_board, evaluate_depth
 import csv
 from additional.menu import main_menu
 
@@ -16,6 +16,7 @@ def main():
     run = True
     clock = game.clock
     fps = game.fps
+    
     
     if game.mode2 == False:
         with open('moves.csv', 'r', newline='') as csvfile:
@@ -64,7 +65,7 @@ def main():
                         writer.writerow([key, value])
             run = False
         
-        if get_all_moves(game.board, utilities.black, game) == []: 
+        elif get_all_moves(game.board, utilities.black, game) == []: 
             print("Red wins")
             if game.mode2 == False:    
                 with open('moves.csv', 'w', newline='') as csvfile:
@@ -78,20 +79,19 @@ def main():
                         writer.writerow([key, value])
             run = False
         
-
         if game.turn == utilities.black:
-            for move in get_all_moves1(game.board, utilities.black, game):
-                print(move.board_as_tuple())
+            
             depth = evaluate_depth(game)
             board_key = game.board.board_as_tuple()
             if board_key in memoization:
                 new_board = tuple_to_board(memoization[board_key])
                 game.black_move(new_board)
                 continue
-            value, new_board = minimax1(game.board, depth, True, game, float('-inf'), float('inf'))
+            value, new_board = minimax(game.board, depth, True, game, float('-inf'), float('inf'))
             if new_board is not None and board_key not in memoization:    
                 memoization[board_key] = new_board.board_as_tuple()
             game.black_move(new_board)
+        
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
