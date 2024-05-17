@@ -2,7 +2,7 @@ import pygame
 from board import Board
 from utilities import width, height, red, black, rows, cols, blue
 from copy import deepcopy
-from minimax import get_all_moves
+from minimax import get_all_moves1
 
 
 class Game(object):
@@ -70,22 +70,16 @@ class Game(object):
         
         if self.seletced_figure and figure == 0 and (row, col) in self.allowed_moves:
             self.board.move_figure(self.seletced_figure, row, col)
-            skipped_figures = []
-            for row1, col1 in self.allowed_moves:  
-                if row1 >= 0 and col1 >= 0 and row == row1 and col == col1:  
-                    skipped_figures.append(self.allowed_moves[(row1, col1)])
-            for skipped_figure in skipped_figures:
-                self.board.remove(skipped_figure)
-                print(skipped_figures)
-                if self.turn == red and len(skipped_figures[0]) > 0:
-                    for skip in range(len(skipped_figure)):
-                        self.black_skipped += 1
-                elif self.turn == black and len(skipped_figures[0]) > 0:
-                    for skip in range(len(skipped_figure)):
-                        self.red_skipped += 1
+            skipped_figures = self.allowed_moves[(row, col)]
+            if skipped_figures:    
+                self.board.remove(skipped_figures)
+                if self.turn == red:
+                    self.black_skipped += 1
+                else:
+                    self.red_skipped += 1
+            self.changing_turn()            
         else:
             return False
-        self.changing_turn()  
 
     def changing_turn(self):
         self.allowed_moves = {}

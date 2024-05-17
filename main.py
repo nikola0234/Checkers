@@ -1,7 +1,7 @@
 import pygame, sys
 import utilities
 from game import Game
-from minimax import get_all_moves, minimax, tuple_to_board, evaluate_depth, evaluate_current_board1, get_all_moves1
+from minimax import get_all_moves, minimax1, tuple_to_board, evaluate_depth, get_all_moves1
 import csv
 from additional.menu import main_menu
 
@@ -9,7 +9,7 @@ screen = pygame.display.set_mode((utilities.width, utilities.height))
 memoization = {}
 
 pygame.display.set_caption("Checkers")
-
+pygame.init()
 game = Game(screen)
 
 def main():
@@ -80,13 +80,15 @@ def main():
         
 
         if game.turn == utilities.black:
+            for move in get_all_moves1(game.board, utilities.black, game):
+                print(move.board_as_tuple())
             depth = evaluate_depth(game)
             board_key = game.board.board_as_tuple()
             if board_key in memoization:
                 new_board = tuple_to_board(memoization[board_key])
                 game.black_move(new_board)
                 continue
-            value, new_board = minimax(game.board, depth, True, game, -1000, 1000) 
+            value, new_board = minimax1(game.board, depth, True, game, float('-inf'), float('inf'))
             if new_board is not None and board_key not in memoization:    
                 memoization[board_key] = new_board.board_as_tuple()
             game.black_move(new_board)
