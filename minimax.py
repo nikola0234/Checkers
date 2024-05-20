@@ -16,7 +16,7 @@ def minimax(position, depth, max_player, game, alfa, beta):
             evaluation = minimax(move, depth-1, False, game, alfa, beta)[0]
             maxEval = max(maxEval, evaluation)
             alfa = max(alfa, evaluation)
-            if beta <= alfa:
+            if beta <= alfa * 1.6:
                 break
             if maxEval == evaluation:
                 best_move = move
@@ -30,7 +30,7 @@ def minimax(position, depth, max_player, game, alfa, beta):
             evaluation = minimax(move, depth-1, True, game, alfa, beta)[0]
             minEval = min(minEval, evaluation)
             beta = min(beta, evaluation)
-            if beta <= alfa:
+            if beta <= alfa * 1.6:
                 break
             if minEval == evaluation:
                 best_move = move
@@ -66,10 +66,6 @@ def evaluate_current_board(board):
     computer_figures_in_corner = 0
     player_vulnerable_figures = 0
     computer_vulnerable_figures = 0
-
-    if board.red_figures < 3:
-        regular_figure_weight = 50
-        dama_weight = 60
 
     for row in range(8):
         for col in range(8):

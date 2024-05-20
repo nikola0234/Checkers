@@ -37,7 +37,6 @@ def main():
         screen.fill('black')
 
         if game.get_winner() != None:
-            print('over')
             if game.mode2 == False:
                 with open('moves.csv', 'w', newline='') as csvfile:
                     writer = csv.writer(csvfile)
@@ -48,6 +47,10 @@ def main():
                     writer = csv.writer(csvfile)
                     for key, value in memoization.items():
                         writer.writerow([key, value])
+            if game.get_winner() == utilities.red:
+                open_victory_screen(screen)
+            elif game.get_winner() == utilities.black:
+                open_loose_screen(screen)
             run = False
         
         
