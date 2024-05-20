@@ -24,7 +24,7 @@ def main():
             for row in reader:
                 key, value = eval(row[0]), eval(row[1])
                 memoization[key] = value
-    elif game.mode2 == True:
+    if game.mode2 == True:
         with open('moves2.csv', 'r', newline='') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:

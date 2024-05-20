@@ -16,7 +16,7 @@ def minimax(position, depth, max_player, game, alfa, beta):
             evaluation = minimax(move, depth-1, False, game, alfa, beta)[0]
             maxEval = max(maxEval, evaluation)
             alfa = max(alfa, evaluation)
-            if beta <= alfa * 0.75:
+            if beta <= alfa:
                 break
             if maxEval == evaluation:
                 best_move = move
@@ -30,7 +30,7 @@ def minimax(position, depth, max_player, game, alfa, beta):
             evaluation = minimax(move, depth-1, True, game, alfa, beta)[0]
             minEval = min(minEval, evaluation)
             beta = min(beta, evaluation)
-            if beta <= alfa * 0.75:
+            if beta <= alfa:
                 break
             if minEval == evaluation:
                 best_move = move
@@ -190,6 +190,8 @@ def get_all_moves(board, color, game):
                 new_board = move_new(temp_piece, move, skip, temp_board)
                 moves.append(new_board)
     
+    if len(moves) > 0 and board.red_figures > 2 and board.black_figures > 2:    
+        del moves[0]
     return moves
 
 

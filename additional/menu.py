@@ -92,7 +92,8 @@ def main_menu(screen, play, game):
         pygame.display.update()
 
 def open_victory_screen(screen):
-    screen.fill("#b68f40")
+    green = (10, 255, 10)
+    screen.fill(green)
     VICTORY_TEXT = get_font(40).render("VICTORY", True, "White")
     VICTORY_RECT = VICTORY_TEXT.get_rect(center=(400, 200))
     screen.blit(VICTORY_TEXT, VICTORY_RECT)
