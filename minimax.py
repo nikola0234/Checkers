@@ -16,7 +16,7 @@ def minimax(position, depth, max_player, game, alfa, beta):
             evaluation = minimax(move, depth-1, False, game, alfa, beta)[0]
             maxEval = max(maxEval, evaluation)
             alfa = max(alfa, evaluation)
-            if beta <= alfa * 1.6:
+            if beta <= alfa:
                 break
             if maxEval == evaluation:
                 best_move = move
@@ -30,8 +30,31 @@ def minimax(position, depth, max_player, game, alfa, beta):
             evaluation = minimax(move, depth-1, True, game, alfa, beta)[0]
             minEval = min(minEval, evaluation)
             beta = min(beta, evaluation)
-            if beta <= alfa * 1.6:
+            if beta <= alfa:
                 break
+            if minEval == evaluation:
+                best_move = move
+        return minEval, best_move
+
+def minimax2(position, depth, max_player, game):
+    if depth == 0:
+        return evaluate_current_board(position), position
+    
+    if max_player:
+        maxEval = float('-inf')
+        best_move = None
+        for move in get_all_moves(position, utilities.black, game):
+            evaluation = minimax2(move, depth-1, False, game)[0]
+            maxEval = max(maxEval, evaluation)
+            if maxEval == evaluation:
+                best_move = move
+        return maxEval, best_move
+    else:
+        minEval = float('inf')
+        best_move = None
+        for move in get_all_moves(position, utilities.red, game):
+            evaluation = minimax2(move, depth-1, True, game)[0]
+            minEval = min(minEval, evaluation)
             if minEval == evaluation:
                 best_move = move
         return minEval, best_move

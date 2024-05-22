@@ -1,7 +1,7 @@
 import pygame, sys
 import utilities
 from game import Game
-from minimax import get_all_moves, minimax, tuple_to_board, evaluate_depth
+from minimax import get_all_moves, minimax, tuple_to_board, evaluate_depth, minimax2
 import csv
 from additional.menu import main_menu, open_victory_screen, open_loose_screen
 
@@ -84,7 +84,7 @@ def main():
             open_victory_screen(screen)
             run = False
         
-        if game.turn == utilities.black:
+        if game.turn == utilities.black and game.board.red_figures > 2:
             
             depth = evaluate_depth(game)
             board_key = game.board.board_as_tuple()
@@ -96,6 +96,19 @@ def main():
             if new_board is not None and board_key not in memoization:    
                 memoization[board_key] = new_board.board_as_tuple()
             game.black_move(new_board)
+        
+        elif game.turn == utilities.black and game.board.red_figures <= 2:
+            depth = 4
+            board_key = game.board.board_as_tuple()
+            if board_key in memoization:
+                new_board = tuple_to_board(memoization[board_key])
+                game.black_move(new_board)
+                continue
+            value, new_board = minimax2(game.board, depth, True, game)
+            if new_board is not None and board_key not in memoization:
+                memoization[board_key] = new_board.board_as_tuple()
+            game.black_move(new_board)
+
         
 
         for event in pygame.event.get():
