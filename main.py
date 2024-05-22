@@ -54,7 +54,7 @@ def main():
             run = False
         
         
-        if get_all_moves(game.board, utilities.red, game) == []:
+        if get_all_moves(game.board, utilities.red) == []:
             print("Black wins")
             if game.mode2 == False:
                 with open('moves.csv', 'w', newline='') as csvfile:
@@ -69,7 +69,7 @@ def main():
             open_loose_screen(screen)
             run = False
         
-        elif get_all_moves(game.board, utilities.black, game) == []: 
+        elif get_all_moves(game.board, utilities.black) == []: 
             print("Red wins")
             if game.mode2 == False:    
                 with open('moves.csv', 'w', newline='') as csvfile:
@@ -97,7 +97,7 @@ def main():
                 memoization[board_key] = new_board.board_as_tuple()
             game.black_move(new_board)
         
-        elif game.turn == utilities.black and game.board.red_figures <= 2:
+        elif game.turn == utilities.black and (game.board.red_figures <= 2 or game.board.black_figures <= 2):
             depth = 4
             board_key = game.board.board_as_tuple()
             if board_key in memoization:

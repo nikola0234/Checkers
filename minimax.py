@@ -10,7 +10,7 @@ def minimax(position, depth, max_player, game, alfa, beta):
     if max_player:
         maxEval = float('-inf')
         best_move = None
-        for move in get_all_moves(position, utilities.black, game):
+        for move in get_all_moves(position, utilities.black):
             if move.board_as_tuple() == ((0, 1, 0, 1, 0, 1, 0, 1), (1, 0, 1, 0, 1, 0, 1, 0), (0, 1, 0, 1, 0, 1, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (2, 0, 2, 0, 2, 0, 2, 0), (0, 2, 0, 2, 0, 2, 0, 2), (2, 0, 2, 0, 2, 0, 2, 0)):
                 continue
             evaluation = minimax(move, depth-1, False, game, alfa, beta)[0]
@@ -24,7 +24,7 @@ def minimax(position, depth, max_player, game, alfa, beta):
     else:
         minEval = float('inf')
         best_move = None
-        for move in get_all_moves(position, utilities.red, game):
+        for move in get_all_moves(position, utilities.red):
             if move.board_as_tuple() == ((0, 1, 0, 1, 0, 1, 0, 1), (1, 0, 1, 0, 1, 0, 1, 0), (0, 1, 0, 1, 0, 1, 0, 1), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (2, 0, 2, 0, 2, 0, 2, 0), (0, 2, 0, 2, 0, 2, 0, 2), (2, 0, 2, 0, 2, 0, 2, 0)):
                 continue
             evaluation = minimax(move, depth-1, True, game, alfa, beta)[0]
@@ -43,7 +43,7 @@ def minimax2(position, depth, max_player, game):
     if max_player:
         maxEval = float('-inf')
         best_move = None
-        for move in get_all_moves(position, utilities.black, game):
+        for move in get_all_moves(position, utilities.black):
             evaluation = minimax2(move, depth-1, False, game)[0]
             maxEval = max(maxEval, evaluation)
             if maxEval == evaluation:
@@ -52,7 +52,7 @@ def minimax2(position, depth, max_player, game):
     else:
         minEval = float('inf')
         best_move = None
-        for move in get_all_moves(position, utilities.red, game):
+        for move in get_all_moves(position, utilities.red):
             evaluation = minimax2(move, depth-1, True, game)[0]
             minEval = min(minEval, evaluation)
             if minEval == evaluation:
@@ -198,7 +198,7 @@ def is_figure_vulnerable(board, figure):
     return False
 
 # Funkcija koja vraca sve moguce poteze za odredjenu boju.
-def get_all_moves(board, color, game):
+def get_all_moves(board, color):
     moves = []
     if board is not None:    
         for piece in board.get_all_figures(color):
@@ -250,7 +250,7 @@ def evaluate_depth(game):
             depth  = 6
         if game.board.black_figures < 4:
             depth = 5
-        if len(get_all_moves(game.board, utilities.black, game)) < 5:
+        if len(get_all_moves(game.board, utilities.black)) < 5:
             depth = 6
 
     return depth
