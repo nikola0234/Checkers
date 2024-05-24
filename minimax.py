@@ -243,12 +243,10 @@ def tuple_to_board(tuple_board):
 
 
 def evaluate_depth(game):
-    depth = 5
+    depth = 4
 
     if game.turn == utilities.black:
-        if game.board.black_figures < 3:
-            depth  = 6
-        if game.board.black_figures < 4:
+        if game.board.black_figures < 5 and game.board.red_figures < 5:
             depth = 5
         if game.board.black_figures < 3 and game.board.red_figures < 3:
             depth = 7
